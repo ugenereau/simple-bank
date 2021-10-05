@@ -7,10 +7,11 @@ import model.Account
 
 import cats.Monad
 import cats.syntax.traverse._
+import cats.syntax.either._
+import cats.syntax.functor._
 
 final class AccountAPI[F[_]: Monad](accountRepository: AccountRepository[F]) {
-  def createAccount(name: String): F[Either[CreateAccountError, Account]] =
-    validateName(name).traverse(accountRepository.insert)
+  def createAccount(name: String): F[Either[CreateAccountError, Account]] = ???
 
   private def validateName(name: String): Either[CreateAccountError, String] = {
     val trimmedName = name.trim

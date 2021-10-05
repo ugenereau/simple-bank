@@ -8,8 +8,9 @@ import routes.input.CreateAccountInput
 
 import cats.effect.{Concurrent, ContextShift, IO, Timer}
 import cats.syntax.semigroupk._
+import io.circe.generic.auto._
 import org.http4s.HttpRoutes
-import sttp.model.StatusCode.{BadRequest, Created}
+import sttp.model.StatusCode.{BadRequest, Created, Forbidden}
 import sttp.tapir.Tapir
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.generic.auto.schemaForCaseClass
@@ -30,7 +31,13 @@ final class BankRoutes(accountAPI: AccountAPI[IO])(implicit
     .post
     .in(jsonBody[CreateAccountInput])
     .out(statusCode(Created) and jsonBody[Account])
-    .errorOut(statusCode(BadRequest) and jsonBody[CreateAccountError])
+    .errorOut(
+      oneOf[CreateAccountError](
+        oneOfMapping(BadRequest, jsonBody[CreateAccountError.NameTooLongError]),
+        oneOfMapping(BadRequest, jsonBody[CreateAccountError.EmptyNameError.type]),
+        oneOfMapping(Forbidden, jsonBody[CreateAccountError.InvalidDatabaseRequestError])
+      )
+    )
     .description("create an account and return it")
     .serverLogic[IO](input => accountAPI.createAccount(input.name))
 
