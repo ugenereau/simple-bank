@@ -8,7 +8,6 @@ import routes.input.CreateAccountInput
 
 import cats.effect.{Concurrent, ContextShift, IO, Timer}
 import cats.syntax.semigroupk._
-import io.circe.generic.auto._
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode.{BadRequest, Created}
 import sttp.tapir.Tapir
