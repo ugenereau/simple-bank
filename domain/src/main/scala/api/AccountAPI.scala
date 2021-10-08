@@ -5,11 +5,11 @@ import api.error.CreateAccountError
 import database.AccountRepository
 import model.Account
 
-import cats.effect.IO
+import cats.Monad
 import cats.syntax.traverse._
 
-final class AccountAPI(accountRepository: AccountRepository) {
-  def createAccount(name: String): IO[Either[CreateAccountError, Account]] =
+final class AccountAPI[F[_]: Monad](accountRepository: AccountRepository[F]) {
+  def createAccount(name: String): F[Either[CreateAccountError, Account]] =
     validateName(name).traverse(accountRepository.insert)
 
   private def validateName(name: String): Either[CreateAccountError, String] = {

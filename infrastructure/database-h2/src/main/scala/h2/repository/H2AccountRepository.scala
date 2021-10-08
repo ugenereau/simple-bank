@@ -14,7 +14,7 @@ import doobie.util.transactor.Transactor
 import java.time.OffsetDateTime
 import java.util.UUID
 
-final class H2AccountRepository(transactor: Transactor[IO]) extends AccountRepository {
+final class H2AccountRepository(transactor: Transactor[IO]) extends AccountRepository[IO] {
   override def insert(name: String): IO[Account] =
     AccountQueries
       .insert(name)

@@ -3,8 +3,6 @@ package database
 
 import model.Account
 
-import cats.effect.IO
-
-trait AccountRepository {
-  def insert(name: String): IO[Account]
+trait AccountRepository[F[_]] {
+  def insert(name: String): F[Account]
 }
