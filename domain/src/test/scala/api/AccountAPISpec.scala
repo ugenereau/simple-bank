@@ -5,7 +5,7 @@ import api.error.CreateAccountError
 import database.AccountRepository
 import model.Account
 
-import cats.effect.IO
+import cats.Id
 import org.mockito.scalatest.IdiomaticMockito
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
@@ -18,19 +18,19 @@ class AccountAPISpec extends AnyWordSpec with Matchers with OptionValues with Id
 
   "AccountApi.createAccount" should {
     "return a Left[CreateAccountError] if name is too long or empty" in {
-      val accountRepository: AccountRepository = mock[AccountRepository]
-      val myApi                                = new AccountAPI(accountRepository)
+      val accountRepository: AccountRepository[Id] = mock[AccountRepository[Id]]
+      val myApi                                    = new AccountAPI(accountRepository)
 
       // We use a mock to simulate the behavior of the function createAccount
       val fakeId                     = UUID.randomUUID()
       val now                        = OffsetDateTime.now()
       def buildAccount(name: String) = Account(fakeId, name, now)
-      accountRepository.insert(*) answers ((name: String) => IO.pure(buildAccount(name)))
+      accountRepository.insert(*) answers ((name: String) => buildAccount(name))
 
-      myApi.createAccount("a" * 16).unsafeRunSync() shouldBe Left(CreateAccountError.NameTooLongError("a" * 16))
-      myApi.createAccount("").unsafeRunSync() shouldBe Left(CreateAccountError.EmptyNameError)
-      myApi.createAccount("  ").unsafeRunSync() shouldBe Left(CreateAccountError.EmptyNameError)
-      myApi.createAccount("Obiwan").unsafeRunSync() shouldBe Right(buildAccount("Obiwan"))
+      myApi.createAccount("a" * 16) shouldBe Left(CreateAccountError.NameTooLongError("a" * 16))
+      myApi.createAccount("") shouldBe Left(CreateAccountError.EmptyNameError)
+      myApi.createAccount("  ") shouldBe Left(CreateAccountError.EmptyNameError)
+      myApi.createAccount("Obiwan") shouldBe Right(buildAccount("Obiwan"))
       accountRepository.insert(*) was called
     }
   }

@@ -18,7 +18,7 @@ import sttp.tapir.openapi.circe.yaml._
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 import sttp.tapir.swagger.http4s.SwaggerHttp4s
 
-final class BankRoutes(accountAPI: AccountAPI)(implicit
+final class BankRoutes(accountAPI: AccountAPI[IO])(implicit
     concurrent: Concurrent[IO],
     cs: ContextShift[IO],
     timer: Timer[IO]
