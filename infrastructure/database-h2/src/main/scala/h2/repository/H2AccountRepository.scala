@@ -11,6 +11,7 @@ import cats.effect.IO
 import doobie.h2.implicits._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException
 
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -24,6 +25,8 @@ final class H2AccountRepository(transactor: Transactor[IO]) extends AccountRepos
         Right(Account(id, name, creationDate))
       }
       .transact(transactor)
-  //we need to catch the JdbcSQLIntegrityConstraintViolationException
+      .handleErrorWith { case _: JdbcSQLIntegrityConstraintViolationException =>
+        IO.pure(Left(AccountRepositoryError.UniqueKeyAlreadyUsedError(name)))
+      }
 
 }
