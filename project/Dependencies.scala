@@ -13,6 +13,7 @@ object Dependencies {
   private val pureConfigVersion          = "0.12.3"
   private val scalaTestVersion           = "3.2.9"
   private val scalaTestScalaCheckVersion = "3.2.9.0"
+  private val mockitoVersion             = "1.16.29"
 
   lazy val circe = Seq(
     "io.circe" %% "circe-core",
@@ -57,8 +58,9 @@ object Dependencies {
   ).map(_ % pureConfigVersion)
 
   lazy val scalaTest = Seq(
-    "org.scalatest"     %% "scalatest"       % scalaTestVersion,
-    "org.scalatestplus" %% "scalacheck-1-15" % scalaTestScalaCheckVersion
+    "org.scalatest"     %% "scalatest"               % scalaTestVersion,
+    "org.scalatestplus" %% "scalacheck-1-15"         % scalaTestScalaCheckVersion,
+    "org.mockito"       %% "mockito-scala-scalatest" % mockitoVersion
   )
 
 }
