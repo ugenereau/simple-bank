@@ -15,7 +15,7 @@ import java.time.OffsetDateTime
 import java.util.UUID
 
 final class H2AccountRepository(transactor: Transactor[IO]) extends AccountRepository {
-  override def insert(name: String): Account =
+  override def insert(name: String): IO[Account] =
     AccountQueries
       .insert(name)
       .withUniqueGeneratedKeys[(UUID, OffsetDateTime)]("id", "creation_date")
@@ -23,6 +23,5 @@ final class H2AccountRepository(transactor: Transactor[IO]) extends AccountRepos
         Account(id, name, creationDate)
       }
       .transact(transactor)
-      .unsafeRunSync()
 
 }

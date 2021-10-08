@@ -32,7 +32,7 @@ final class BankRoutes(accountAPI: AccountAPI)(implicit
     .out(statusCode(Created) and jsonBody[Account])
     .errorOut(statusCode(BadRequest) and jsonBody[CreateAccountError])
     .description("create an account and return it")
-    .serverLogic[IO](input => IO.pure(accountAPI.createAccount(input.name)))
+    .serverLogic[IO](input => accountAPI.createAccount(input.name))
 
   private val endpoints = List(createAccount)
 
